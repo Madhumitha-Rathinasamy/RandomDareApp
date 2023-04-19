@@ -6,7 +6,6 @@ let completedStatus = []
 
 const dareList = async (suggestedEmail) => {
     try {
-        console.log(suggestedEmail)
         const foundEmails = await Dare.find();
 
         const fuseOptions = {
@@ -16,7 +15,6 @@ const dareList = async (suggestedEmail) => {
             inProcess.length = 0;
             completedStatus.length = 0;
         }
-        console.log(inProcess.length)
 
         const fuse = new Fuse(foundEmails, fuseOptions);
         const result = fuse.search(suggestedEmail);
@@ -28,7 +26,6 @@ const dareList = async (suggestedEmail) => {
                 completedStatus.push({ dare: result[i].item.dare_name })
             }
         }
-        console.log(inProcess)
         return ({
             inprocess: inProcess,
             Completed: completedStatus

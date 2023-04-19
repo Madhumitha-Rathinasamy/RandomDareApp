@@ -12,9 +12,6 @@ async function sendEndOfDayEmail(userEmail, completedDares, pendingDares) {
             },
         });
 
-        const pending = JSON.stringify(pendingDares)
-        const completed = JSON.stringify(completedDares)
-
         const mailOptions = {
             from: 'madhumitharathinasamy23@gmail.com',
             to: userEmail,
@@ -23,15 +20,15 @@ async function sendEndOfDayEmail(userEmail, completedDares, pendingDares) {
              <p>Hi there,</p>
              <p>Here's the summary of your completed and pending dares:</p>
              <h2>Completed Dares:</h2>
-             <ul>${completed}</ul>
+             <ul>${completedDares}</ul>
              <h2>Pending Dares:</h2>
-             <ul>${pending}</ul>
+             <ul>${pendingDares}</ul>
              <p>Thank you for using our Dare Tracker!</p>`
         };
 
         // Send the email
         const info = await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${userEmail} with message id: ${info.messageId}`);
+        console.log(`Email sent to ${userEmail}`);
     } catch (error) {
         console.error(`Failed to send email: ${error}`);
     }
@@ -45,16 +42,15 @@ const sendmail = async (req, res) => {
             suggestedTo.push(dare[i].suggested_to)
         }
     }
-    for (i = 0; i < suggestedTo.length; i++) {
-        console.log(suggestedTo.length)
-        const userEmail = suggestedTo[i];
+    let pendingDares = []
+    let completedDares = []
+    for (let i = 0; i < suggestedTo.length; i++) {
         let listDare = await dareList(suggestedTo[i]);
-
-        // const userEmail = suggestedTo[i];
-        const completedDares = listDare.Completed;
-        const pendingDares = listDare.inprocess;
-
-        await sendEndOfDayEmail(userEmail, completedDares, pendingDares);
+        const pending = JSON.stringify(listDare.inprocess)
+        const completed = JSON.stringify(listDare.Completed)
+        console.log("pending" + pending);
+        console.log("completed" + completed)
+        sendEndOfDayEmail(suggestedTo[i], completed, pending);
     }
 }
 
